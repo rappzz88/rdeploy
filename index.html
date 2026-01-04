@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RpazPoly - Deploy Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left p {
+            opacity: 0.9;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            background: #e5e7eb;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #374151;
+        }
+
+        .tab-btn:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 400px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .message.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .website-card {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .website-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .website-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .website-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .website-url {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .website-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #1e40af;
+        }
+
+        .btn-copy {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #059669;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .dashboard-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-card p {
+            opacity: 0.9;
+        }
+
+        .user-card {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .user-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+        }
+
+        .user-info-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 18px;
+        }
+
+        .user-exp {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-expired {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .user-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f9fafb;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #fbbf24;
+            background: #fffbeb;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e0e7ff;
+            border-radius: 8px;
+            color: #3730a3;
+        }
+
+        @media (max-width: 768px) {
+            .header-left h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tab-btn {
+                min-width: 100px;
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <!-- Login Screen -->
+        <div id="loginScreen">
+            <div class="header">
+                <div class="header-left">
+                    <h1>🚀 RpazPoly Deploy</h1>
+                    <p>Deploy Website HTML Anda dengan Mudah</p>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="message" class="message"></div>
+
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchAuthTab('login')">Masuk</button>
+                    <button class="tab-btn" onclick="switchAuthTab('register')">Daftar</button>
+                </div>
+
+                <!-- Login Tab -->
+                <div id="loginTab" class="tab-content active">
+                    <div class="login-container">
+                        <h2 style="margin-bottom: 20px; color: #1f2937;">Masuk ke Akun</h2>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <label>Nama Pengguna</label>
+                                <input type="text" id="loginUsername" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Kata Laluan</label>
+                                <input type="password" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn">Masuk</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Register Tab -->
+                <div id="registerTab" class="tab-content">
+                    <div class="login-container">
+                        <h2 style="margin-bottom: 20px; color: #1f2937;">Daftar Akun Baru</h2>
+                        <form onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <label>Nama Pengguna</label>
+                                <input type="text" id="regUsername" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Kata Laluan</label>
+                                <input type="password" id="regPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Daftar</button>
+                        </form>
+                        <p style="margin-top: 15px; text-align: center; color: #6b7280;">Akun baru akan mendapat masa percubaan 1 jam</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App (After Login) -->
+        <div id="mainApp" style="display: none;">
+            <div class="header">
+                <div class="header-left">
+                    <h1>🚀 RpazPoly Deploy</h1>
+                    <p>Selamat datang, <span id="currentUsername"></span>!</p>
+                </div>
+                <div class="user-info">
+                    <div>Masa tinggal: <strong id="timeLeft"></strong></div>
+                    <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+                </div>
+            </div>
+
+            <div class="content">
+                <div id="messageApp" class="message"></div>
+
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('deploy')">Deploy Website</button>
+                    <button class="tab-btn" onclick="switchTab('mywebsites')">Website Saya</button>
+                    <button class="tab-btn" id="adminBtn" style="display: none;" onclick="switchTab('admin')">Admin Panel</button>
+                </div>
+
+                <!-- Deploy Tab -->
+                <div id="deploy" class="tab-content active">
+                    <h2 style="margin-bottom: 20px; color: #1f2937;">Deploy Website Baru</h2>
+                    
+                    <form onsubmit="handleDeploy(event)">
+                        <div class="form-group">
+                            <label>Nama Website</label>
+                            <input type="text" id="websiteName" placeholder="contoh: portfolio-saya" required>
+                            <small style="color: #6b7280;">Nama ini akan jadi URL anda</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload File HTML atau Paste Code</label>
+                            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                                <div style="font-size: 3em; margin-bottom: 10px;">📁</div>
+                                <p><strong>Klik untuk pilih file</strong> atau seret file ke sini</p>
+                                <p style="color: #6b7280; font-size: 14px; margin-top: 10px;">Format: .html, .htm</p>
+                            </div>
+                            <input type="file" id="fileInput" accept=".html,.htm" style="display: none;" onchange="handleFileSelect(event)">
+                            <div id="fileInfo" class="file-info" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Atau Paste Code HTML Anda</label>
+                            <textarea id="htmlCode" placeholder="<!DOCTYPE html>
+<html>
+<head>
+    <title>Website Saya</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+</body>
+</html>"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn" id="deployBtn">🚀 Deploy Sekarang</button>
+                    </form>
+                </div>
+
+                <!-- My Websites Tab -->
+                <div id="mywebsites" class="tab-content">
+                    <h2 style="margin-bottom: 20px; color: #1f2937;">Website Saya</h2>
+                    <div id="websiteList"></div>
+                </div>
+
+                <!-- Admin Panel Tab -->
+                <div id="admin" class="tab-content">
+                    <h2 style="margin-bottom: 20px; color: #1f2937;">Panel Admin</h2>
+                    
+                    <div class="dashboard">
+                        <div class="dashboard-card">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Pengguna</p>
+                        </div>
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <h3 id="activeUsers">0</h3>
+                            <p>Aktif</p>
+                        </div>
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <h3 id="expiredUsers">0</h3>
+                            <p>Tamat Tempoh</p>
+                        </div>
+                        <div class="dashboard-card" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                            <h3 id="totalWebsites">0</h3>
+                            <p>Total Website</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 15px; color: #1f2937;">Cipta Akun Custom</h3>
+                    <form onsubmit="handleCreateCustomAccount(event)" style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label>Nama Pengguna</label>
+                            <input type="text" id="customUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kata Laluan</label>
+                            <input type="password" id="customPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Masa Expired (Jam)</label>
+                            <input type="number" id="customExpiry" min="1" required>
+                        </div>
+                        <button type="submit" class="btn">Cipta Akun</button>
+                    </form>
+
+                    <h3 style="margin-bottom: 15px; color: #1f2937;">Senarai Pengguna</h3>
+                    <div id="userList" class="user-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, get, remove, update, push } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdk-UlJaNNsa8g_DQUxcy31MJmy_Xt0-I",
+            authDomain: "rpazpoly.firebaseapp.com",
+            databaseURL: "https://rpazpoly-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "rpazpoly",
+            storageBucket: "rpazpoly.firebasestorage.app",
+            messagingSenderId: "280920990574",
+            appId: "1:280920990574:web:457fe05ab7f95f2891d77f",
+            measurementId: "G-GJ0XEYM2Y2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let currentUser = null;
+        let timeInterval = null;
+
+        window.switchAuthTab = function(tabName) {
+            document.querySelectorAll('#loginScreen .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#loginScreen .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        };
+
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('#mainApp .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#mainApp .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'admin') {
+                loadUserList();
+            } else if (tabName === 'mywebsites') {
+                loadMyWebsites();
+            }
+        };
+
+        function showMessage(message, type, isApp = false) {
+            const msgEl = document.getElementById(isApp ? 'messageApp' : 'message');
+            msgEl.textContent = message;
+            msgEl.className = `message ${type} show`;
+            setTimeout(() => {
+                msgEl.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateTimeLeft(expiredTime) {
+            const timeLeft = expiredTime - Date.now();
+            if (timeLeft <= 0) {
+                document.getElementById('timeLeft').textContent = 'Tamat Tempoh';
+                clearInterval(timeInterval);
+                setTimeout(() => {
+                    handleLogout();
+                    showMessage('Akun anda telah tamat tempoh!', 'error');
+                }, 1000);
+                return;
+            }
+
+            const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+            const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+            
+            document.getElementById('timeLeft').textContent = `${hours}j ${minutes}m ${seconds}s`;
+        }
+
+        window.handleRegister = async function(event) {
+            event.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            if (username.length < 3) {
+                showMessage('Nama pengguna mestilah sekurang-kurangnya 3 aksara', 'error');
+                return;
+            }
+
+            try {
+                const userRef = ref(db, 'users/' + username);
+                const snapshot = await get(userRef);
+
+                if (snapshot.exists()) {
+                    showMessage('Nama pengguna sudah wujud!', 'error');
+                    return;
+                }
+
+                const expiredTime = Date.now() + (60 * 60 * 1000); // 1 jam
+                await set(userRef, {
+                    password: password,
+                    expiredTime: expiredTime,
+                    createdAt: Date.now()
+                });
+
+                showMessage('Pendaftaran berjaya! Anda boleh masuk sekarang.', 'success');
+                document.getElementById('regUsername').value = '';
+                document.getElementById('regPassword').value = '';
+                switchAuthTab('login');
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error');
+            }
+        };
+
+        window.handleLogin = async function(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const userRef = ref(db, 'users/' + username);
+                const snapshot = await get(userRef);
+
+                if (!snapshot.exists()) {
+                    showMessage('Nama pengguna tidak dijumpai!', 'error');
+                    return;
+                }
+
+                const userData = snapshot.val();
+
+                if (userData.password !== password) {
+                    showMessage('Kata laluan salah!', 'error');
+                    return;
+                }
+
+                if (Date.now() > userData.expiredTime) {
+                    showMessage('Akun anda telah tamat tempoh!', 'error');
+                    return;
+                }
+
+                currentUser = username;
+                document.getElementById('currentUsername').textContent = username;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+
+                if (username.toLowerCase() === 'rapzz') {
+                    document.getElementById('adminBtn').style.display = 'block';
+                }
+
+                timeInterval = setInterval(() => updateTimeLeft(userData.expiredTime), 1000);
+                updateTimeLeft(userData.expiredTime);
+                loadMyWebsites();
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error');
+            }
+        };
+
+        window.handleLogout = function() {
+            currentUser = null;
+            clearInterval(timeInterval);
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        };
+
+        window.handleFileSelect = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('htmlCode').value = e.target.result;
+                    document.getElementById('fileInfo').style.display = 'block';
+                    document.getElementById('fileInfo').textContent = `✓ File dipilih: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                };
+                reader.readAsText(file);
+            }
+        };
+
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && (file.name.endsWith('.html') || file.name.endsWith('.htm'))) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    document.getElementById('htmlCode').value = ev.target.result;
+                    document.getElementById('fileInfo').style.display = 'block';
+                    document.getElementById('fileInfo').textContent = `✓ File diseret: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        window.handleDeploy = async function(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                showMessage('Sila log masuk terlebih dahulu!', 'error', true);
+                return;
+            }
+
+            const websiteName = document.getElementById('websiteName').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const htmlCode = document.getElementById('htmlCode').value.trim();
+
+            if (!htmlCode) {
+                showMessage('Sila masukkan code HTML!', 'error', true);
+                return;
+            }
+
+            if (!htmlCode.includes('<html') && !htmlCode.includes('<!DOCTYPE')) {
+                showMessage('Code HTML tidak sah! Pastikan ada tag <html> atau <!DOCTYPE>', 'error', true);
+                return;
+            }
+
+            const deployBtn = document.getElementById('deployBtn');
+            deployBtn.disabled = true;
+            deployBtn.textContent = '⏳ Sedang Deploy...';
+
+            try {
+                const websiteRef = ref(db, `websites/${currentUser}/${websiteName}`);
+                const snapshot = await get(websiteRef);
+
+                if (snapshot.exists()) {
+                    showMessage('Nama website sudah wujud! Sila guna nama lain.', 'error', true);
+                    deployBtn.disabled = false;
+                    deployBtn.textContent = '🚀 Deploy Sekarang';
+                    return;
+                }
+
+                await set(websiteRef, {
+                    name: websiteName,
+                    htmlCode: htmlCode,
+                    createdAt: Date.now(),
+                    owner: currentUser
+                });
+
+                showMessage('✅ Website berjaya di-deploy!', 'success', true);
+                document.getElementById('websiteName').value = '';
+                document.getElementById('htmlCode').value = '';
+                document.getElementById('fileInfo').style.display = 'none';
+                document.getElementById('fileInput').value = '';
+                
+                setTimeout(() => {
+                    switchTab('mywebsites');
+                }, 1500);
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            } finally {
+                deployBtn.disabled = false;
+                deployBtn.textContent = '🚀 Deploy Sekarang';
+            }
+        };
+
+        async function loadMyWebsites() {
+            if (!currentUser) return;
+
+            try {
+                const websitesRef = ref(db, `websites/${currentUser}`);
+                const snapshot = await get(websitesRef);
+
+                if (!snapshot.exists()) {
+                    document.getElementById('websiteList').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #6b7280;">
+                            <div style="font-size: 4em; margin-bottom: 20px;">📭</div>
+                            <h3>Belum ada website</h3>
+                            <p>Deploy website pertama anda sekarang!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const websites = snapshot.val();
+                let html = '';
+
+                for (let websiteName in websites) {
+                    const website = websites[websiteName];
+                    const websiteUrl = `${window.location.origin}/#/${currentUser}/${websiteName}`;
+                    const createdDate = new Date(website.createdAt).toLocaleString('ms-MY');
+
+                    html += `
+                        <div class="website-card">
+                            <div class="website-header">
+                                <div>
+                                    <div class="website-title">🌐 ${websiteName}</div>
+                                    <small style="color: #6b7280;">Dicipta: ${createdDate}</small>
+                                </div>
+                            </div>
+                            <div class="website-url">${websiteUrl}</div>
+                            <div class="website-actions">
+                                <button class="btn-small btn-view" onclick="viewWebsite('${currentUser}', '${websiteName}')">👁️ Lihat</button>
+                                <button class="btn-small btn-copy" onclick="copyUrl('${websiteUrl}')">📋 Copy URL</button>
+                                <button class="btn-small btn-delete" onclick="deleteWebsite('${websiteName}')">🗑️ Hapus</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('websiteList').innerHTML = html;
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        }
+
+        window.viewWebsite = function(owner, websiteName) {
+            window.open(`#/${owner}/${websiteName}`, '_blank');
+        };
+
+        window.copyUrl = function(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showMessage('✅ URL berjaya disalin!', 'success', true);
+            });
+        };
+
+        window.deleteWebsite = async function(websiteName) {
+            if (!confirm(`Adakah anda pasti mahu menghapus website "${websiteName}"?`)) return;
+
+            try {
+                const websiteRef = ref(db, `websites/${currentUser}/${websiteName}`);
+                await remove(websiteRef);
+                showMessage('Website berjaya dihapus!', 'success', true);
+                loadMyWebsites();
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        };
+
+        window.handleCreateCustomAccount = async function(event) {
+            event.preventDefault();
+            
+            if (!currentUser || currentUser.toLowerCase() !== 'rapzz') {
+                showMessage('Hanya admin yang boleh cipta akun custom!', 'error', true);
+                return;
+            }
+
+            const username = document.getElementById('customUsername').value.trim();
+            const password = document.getElementById('customPassword').value;
+            const expiryHours = parseInt(document.getElementById('customExpiry').value);
+
+            try {
+                const userRef = ref(db, 'users/' + username);
+                const snapshot = await get(userRef);
+
+                if (snapshot.exists()) {
+                    showMessage('Nama pengguna sudah wujud!', 'error', true);
+                    return;
+                }
+
+                const expiredTime = Date.now() + (expiryHours * 60 * 60 * 1000);
+                await set(userRef, {
+                    password: password,
+                    expiredTime: expiredTime,
+                    createdAt: Date.now(),
+                    createdBy: 'admin'
+                });
+
+                showMessage('Akun berjaya dicipta!', 'success', true);
+                document.getElementById('customUsername').value = '';
+                document.getElementById('customPassword').value = '';
+                document.getElementById('customExpiry').value = '';
+                loadUserList();
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        };
+
+        async function loadUserList() {
+            try {
+                const usersRef = ref(db, 'users');
+                const snapshot = await get(usersRef);
+
+                if (!snapshot.exists()) {
+                    document.getElementById('userList').innerHTML = '<p style="text-align: center; color: #6b7280;">Tiada pengguna dijumpai</p>';
+                    return;
+                }
+
+                const users = snapshot.val();
+                let html = '';
+                let totalUsers = 0;
+                let activeUsers = 0;
+                let expiredUsers = 0;
+
+                // Count total websites
+                const websitesRef = ref(db, 'websites');
+                const websitesSnapshot = await get(websitesRef);
+                let totalWebsites = 0;
+                if (websitesSnapshot.exists()) {
+                    const allWebsites = websitesSnapshot.val();
+                    for (let user in allWebsites) {
+                        totalWebsites += Object.keys(allWebsites[user]).length;
+                    }
+                }
+
+                for (let username in users) {
+                    const user = users[username];
+                    const isExpired = Date.now() > user.expiredTime;
+                    const timeLeft = user.expiredTime - Date.now();
+                    const hoursLeft = Math.floor(timeLeft / (60 * 60 * 1000));
+                    const minutesLeft = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+
+                    totalUsers++;
+                    if (isExpired) {
+                        expiredUsers++;
+                    } else {
+                        activeUsers++;
+                    }
+
+                    html += `
+                        <div class="user-card">
+                            <div class="user-info-card">
+                                <div>
+                                    <span class="user-name">${username}</span>
+                                    <span class="status-badge ${isExpired ? 'status-expired' : 'status-active'}">
+                                        ${isExpired ? 'Tamat Tempoh' : 'Aktif'}
+                                    </span>
+                                    <div class="user-exp">
+                                        ${isExpired ? 'Tamat tempoh' : `Masa tinggal: ${hoursLeft} jam ${minutesLeft} minit`}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="website-actions" style="margin-top: 10px;">
+                                <button class="btn-small btn-copy" onclick="addTime('${username}')">⏰ Tambah Masa</button>
+                                <button class="btn-small btn-delete" onclick="deleteUser('${username}')">🗑️ Hapus</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('userList').innerHTML = html;
+                document.getElementById('totalUsers').textContent = totalUsers;
+                document.getElementById('activeUsers').textContent = activeUsers;
+                document.getElementById('expiredUsers').textContent = expiredUsers;
+                document.getElementById('totalWebsites').textContent = totalWebsites;
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        }
+
+        window.addTime = async function(username) {
+            const hours = prompt('Masukkan bilangan jam untuk ditambah:');
+            if (!hours || isNaN(hours)) return;
+
+            try {
+                const userRef = ref(db, 'users/' + username);
+                const snapshot = await get(userRef);
+
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const currentExpiry = userData.expiredTime;
+                    const newExpiry = Math.max(Date.now(), currentExpiry) + (parseInt(hours) * 60 * 60 * 1000);
+
+                    await update(userRef, {
+                        expiredTime: newExpiry
+                    });
+
+                    showMessage(`Berjaya tambah ${hours} jam untuk ${username}`, 'success', true);
+                    loadUserList();
+                }
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        };
+
+        window.deleteUser = async function(username) {
+            if (!confirm(`Adakah anda pasti mahu menghapus ${username}?`)) return;
+
+            try {
+                const userRef = ref(db, 'users/' + username);
+                await remove(userRef);
+                
+                // Also delete all websites by this user
+                const websitesRef = ref(db, `websites/${username}`);
+                await remove(websitesRef);
+                
+                showMessage(`Pengguna ${username} berjaya dihapus`, 'success', true);
+                loadUserList();
+            } catch (error) {
+                showMessage('Ralat: ' + error.message, 'error', true);
+            }
+        };
+
+        // Handle URL routing to display websites
+        function handleRouting() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#/')) {
+                const parts = hash.substring(2).split('/');
+                if (parts.length === 2) {
+                    const [owner, websiteName] = parts;
+                    displayWebsite(owner, websiteName);
+                }
+            }
+        }
+
+        async function displayWebsite(owner, websiteName) {
+            try {
+                const websiteRef = ref(db, `websites/${owner}/${websiteName}`);
+                const snapshot = await get(websiteRef);
+
+                if (snapshot.exists()) {
+                    const website = snapshot.val();
+                    document.body.innerHTML = website.htmlCode;
+                } else {
+                    document.body.innerHTML = `
+                        <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%); font-family: 'Segoe UI', sans-serif;">
+                            <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 500px;">
+                                <div style="font-size: 5em; margin-bottom: 20px;">❌</div>
+                                <h1 style="color: #1f2937; margin-bottom: 10px;">Website Tidak Dijumpai</h1>
+                                <p style="color: #6b7280; margin-bottom: 20px;">Website "${websiteName}" milik "${owner}" tidak wujud.</p>
+                                <a href="${window.location.origin}" style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">Kembali ke Dashboard</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading website:', error);
+            }
+        }
+
+        window.addEventListener('hashchange', handleRouting);
+        window.addEventListener('load', handleRouting);
+    </script>
+</body>
+</html>
